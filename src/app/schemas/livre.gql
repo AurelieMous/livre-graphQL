@@ -1,0 +1,16 @@
+scalar DateTime
+
+type Livre {
+    id: Int!
+    titre: String!
+    resume: String!
+    dateParution: DateTime
+    dateParutionFrance: DateTime
+    auteur_id: Auteur!
+    theme_id: [Theme!]
+    pays_id: Pays!
+    commentaire_id: Commentaire
+    nbPage: Int
+    createdAt: DateTime!
+}
+

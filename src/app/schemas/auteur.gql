@@ -1,0 +1,7 @@
+type Auteur {
+id: Int!
+nom: String!
+prenom: String!
+description: String!
+createdAt: DateTime!
+}

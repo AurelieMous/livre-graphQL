@@ -1,0 +1,41 @@
+services:
+  livre-db:
+    image: postgres:16-alpine
+    container_name: livre-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_DB: ${PG_DATABASE}
+    volumes:
+      - ./data:/docker-entrypoint-initdb.d
+      - ./pg-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PG_USER} -d ${PG_DATABASE}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    ports:
+      - "5432:5432"
+
+  livre-gql-api:
+    container_name: livre-gql-api
+    build: ./src
+    working_dir: /app
+    volumes:
+      - ./src:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - PGHOST=livre-db
+      - PGPORT=5432
+      - PGUSER=${PG_USER}
+      - PGDATABASE=${PG_DATABASE}
+      - PGPASSWORD=${PG_PASSWORD}
+      - PORT=${PORT}
+    depends_on:
+      livre-db:
+        condition: service_healthy
+    command: ["npm", "run", "dev"]
+    restart: unless-stopped

@@ -1,0 +1,31 @@
+{
+  "name": "test-graphQL",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "../node_modules/.bin/tsc",
+    "dev": "DEBUG=app:* nodemon index.ts"
+  },
+  "dependencies": {
+    "@apollo/datasource-rest": "^6.4.1",
+    "@apollo/server": "^5.0.0",
+    "dotenv": "^16.4.7",
+    "graphql": "^16.11.0",
+    "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.24.0",
+    "@faker-js/faker": "^9.6.0",
+    "@types/debug": "^4.1.12",
+    "@types/node": "^24.5.2",
+    "@types/pg": "^8.15.5",
+    "eslint": "^9.24.0",
+    "globals": "^16.0.0",
+    "nodemon": "^3.1.9",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.3",
+    "typescript-eslint": "^8.29.1"
+  },
+  "private": true
+}

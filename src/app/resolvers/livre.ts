@@ -1,7 +1,5 @@
 // Import des types TypeScript pour assurer la cohérence des données
 import {Livre, Context, Auteur, Theme, Pays} from "../../types";
-// Import du datamapper auteur (semble inutilisé dans ce fichier)
-import auteur from "../datasource/livreDB/auteur";
 
 /**
  * Resolvers GraphQL pour l'entité Livre
@@ -43,10 +41,9 @@ const resolvers = {
      * @param datasource Context contenant l'accès aux datamappers
      * @returns Promise<Theme> Les données du thème
      */
-    theme: async (parent: Livre, _: undefined, { datasource }: Context): Promise<Theme> => {
-        // Requête pour récupérer le thème complet
+    themes: async (parent: Livre, _: undefined, { datasource }: Context): Promise<Theme[]> => {
         const theme = await datasource.livreDB.theme.findByPk(parent.theme_id);
-        return theme as Theme;
+        return theme ? [theme] : []; // ← Toujours retourner un tableau
     },
 
     /**

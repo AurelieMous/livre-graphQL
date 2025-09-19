@@ -6,7 +6,7 @@ import debug from "debug";
 import typeDefs from "./app/schemas"
 import resolvers from "./app/resolvers";
 
-const PORT = process.env.PORT ? parseInt(process.env.PORT) : 4000;
+const PORT = 3000;
 
 const logger = debug("app:server");
 

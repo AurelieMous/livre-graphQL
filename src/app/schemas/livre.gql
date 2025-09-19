@@ -6,9 +6,9 @@ type Livre {
     resume: String!
     dateParution: DateTime
     dateParutionFrance: DateTime
-    auteur_id: Auteur!
-    theme_id: [Theme!]
-    pays_id: Pays!
+    auteur: Auteur!     # ← Objet complet, pas juste l'ID
+    themes: [Theme!]    # ← Objets complets
+    pays: Pays!         # ← Objet complet
     nbPage: Int
     createdAt: DateTime!
 }

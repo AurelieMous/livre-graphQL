@@ -7,9 +7,9 @@ export interface Livre {
     resume: string;
     dateParution: Date;
     dateParutionFrance: Date;
-    auteur_id: number;
-    theme_id: number;
-    pays_id: number;
+    auteur_id: number;    // ← ID de l'auteur en base
+    theme_id: number;     // ← ID du thème en base
+    pays_id: number;      // ← ID du pays en base
     nbPage: number;
     createdAt: Date;
 }

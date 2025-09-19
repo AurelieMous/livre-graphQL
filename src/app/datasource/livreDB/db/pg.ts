@@ -2,8 +2,8 @@ import debug from "debug";
 import { Pool } from "pg";
 import { DatabaseClient } from "../../../../types";
 
-// Configuration du logger avec le namespace "app:restodb" pour le debugging
-const logger = debug("app:restodb");
+// Configuration du logger avec le namespace "app:livredb" pour le debugging
+const logger = debug("app:livredb");
 
 // Création du pool de connexions PostgreSQL
 // Le pool gère automatiquement les connexions multiples et leur réutilisation

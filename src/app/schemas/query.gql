@@ -1,0 +1,17 @@
+type Query {
+    livres(pagination: PaginationInput): [Livre!]!
+    livre(id:Int!): Livre!
+    auteurs(pagination: PaginationInput): [Auteur!]!
+    auteur(id:Int!): Auteur!
+    themes(pagination: PaginationInput): [Theme!]!
+    theme(id:Int!): Theme!
+    payss(pagination: PaginationInput): [Pays!]!
+    pays(id:Int!): Pays!
+}
+
+input PaginationInput {
+    limit: Int
+    offset: Int
+    orderBy: String
+    direction: String
+}

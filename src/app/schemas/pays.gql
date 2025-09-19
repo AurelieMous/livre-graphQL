@@ -1,0 +1,5 @@
+type Pays {
+    id: Int!
+    nom: String!
+    createdAt: DateTime!
+}

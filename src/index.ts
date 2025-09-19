@@ -1,8 +1,10 @@
 import {ApolloServer} from "@apollo/server";
 import { Context } from "./types";
-import BookDB from './app/datasource/bookDB';
+import LivreDB from './app/datasource/livreDB';
 import {startStandaloneServer} from "@apollo/server/standalone";
-import {debug} from "node:util";
+import debug from "debug";
+import typeDefs from "./app/schemas"
+import resolvers from "./app/resolvers";
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : 4000;
 
@@ -15,8 +17,8 @@ const server = new ApolloServer({
 
 async function createContext() : Promise<Context> {
     return {
-        datasources: {
-            restoDB: new BookDB(),
+        datasource: {
+            livreDB: new LivreDB(),
         },
     };
 }

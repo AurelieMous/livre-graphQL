@@ -1,3 +1,6 @@
-export type Theme{
-
+type Theme{
+    id: Int!
+    titre: String!
+    adulte: Boolean!
+    createdAt: DateTime!
 }

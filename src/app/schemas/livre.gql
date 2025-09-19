@@ -9,7 +9,6 @@ type Livre {
     auteur_id: Auteur!
     theme_id: [Theme!]
     pays_id: Pays!
-    commentaire_id: Commentaire
     nbPage: Int
     createdAt: DateTime!
 }

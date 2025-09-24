@@ -7,9 +7,30 @@ type Livre {
     dateParution: DateTime
     dateParutionFrance: DateTime
     auteur: Auteur!     # ← Objet complet, pas juste l'ID
-    themes: [Theme!]    # ← Objets complets
+    themes: [Theme!]!    # ← Objets complets
     pays: Pays!         # ← Objet complet
     nbPage: Int
     createdAt: DateTime!
 }
 
+input CreateLivreInput {
+    titre: String!
+    resume: String!
+    dateParution: DateTime
+    dateParutionFrance: DateTime
+    nbPage: Int
+    auteur_id: Int!
+    pays_id: Int!
+    theme_ids: [Int!]
+}
+
+input UpdateLivreInput {
+    titre: String!
+    resume: String!
+    dateParution: DateTime
+    dateParutionFrance: DateTime
+    nbPage: Int
+    auteur_id: Int!
+    pays_id: Int!
+    theme_ids: [Int!]
+}

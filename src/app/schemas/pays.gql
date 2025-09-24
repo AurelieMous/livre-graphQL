@@ -2,4 +2,6 @@ type Pays {
     id: Int!
     nom: String!
     createdAt: DateTime!
+    # Relation inverse
+    livres(pagination: PaginationInput): [Livre!]!
 }

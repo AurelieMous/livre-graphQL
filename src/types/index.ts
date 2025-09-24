@@ -81,5 +81,11 @@ export interface DeleteLivreArgs{
     id: number;
 }
 
+export interface MutationArgs {
+    id: number;
+    livreId: number;
+    themeId: number;
+}
+
 export interface CreateLivreInput extends Omit<Livre, 'id' | 'createdAt'> {}
 export interface UpdateLivreInput extends CreateLivreInput {}

@@ -3,6 +3,7 @@ type Query {
     livre(id:Int!): Livre!
     auteurs(pagination: PaginationInput): [Auteur!]!
     auteur(id:Int!): Auteur!
+
     themes(pagination: PaginationInput): [Theme!]!
     theme(id:Int!): Theme!
     payss(pagination: PaginationInput): [Pays!]!

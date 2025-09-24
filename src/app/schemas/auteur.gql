@@ -4,4 +4,7 @@ nom: String!
 prenom: String!
 description: String!
 createdAt: DateTime!
+# Relation inverse
+livres(pagination: PaginationInput): [Livre!]!
 }
+

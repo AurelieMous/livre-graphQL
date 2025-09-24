@@ -9,7 +9,7 @@ import Pays from "./pays";
 export default {
     Query,
     Livre,
-    // Mutation,
+    Mutation,
     Theme,
     Auteur,
     Pays,

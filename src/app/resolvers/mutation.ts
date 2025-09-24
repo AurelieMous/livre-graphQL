@@ -1,5 +1,5 @@
 // Import des types TypeScript pour le typage des arguments et du contexte
-import {Context, CreateLivreArgs, DeleteLivreArgs, UpdateLivreArgs} from "../../types";
+import {Context, CreateLivreArgs, DeleteLivreArgs, MutationArgs, UpdateLivreArgs} from "../../types";
 import resolvers from "./index";
 
 // Objet contenant tous les resolvers pour les mutations liées aux livres
@@ -44,6 +44,14 @@ const resolver = {
         // Appel à la couche de données pour supprimer le livre
         const isDeleted = await datasource.livreDB.livre.delete(args.id);
         return isDeleted;
+    },
+
+    associateLivreWithTheme: async(_: undefined, { livreId, themeId }: MutationArgs, { datasource }: Context) => {
+        const livre = await datasource.livreDB.livre.associateWithTheme(
+            livreId,
+            themeId
+        );
+        return livre;
     }
 }
 

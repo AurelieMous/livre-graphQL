@@ -237,6 +237,16 @@ class Livre extends CoreDatamapper<ILivre>{
         const results = await this.client.query(preparedQuery);
         return results.rows;
     }
+
+    async associateWithTheme(livreId: number, themesId: number) {
+        const preparedQuery = {
+            text: `INSERT INTO livre_theme (livre_id, theme_id) VALUES ($1, $2)`,
+            values: [livreId, themesId]
+        }
+        await this.client.query(preparedQuery);
+        const livre = await this.findByPk(livreId);
+        return livre;
+    }
 }
 
 export default Livre;

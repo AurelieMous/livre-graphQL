@@ -2,4 +2,10 @@ type Mutation {
     createLivre(input: CreateLivreInput!): Livre!
     updateLivre(id: Int!, input: UpdateLivreInput): Livre!
     deleteLivre(id: Int!): Boolean!
+
+    associateLivreWithTheme(
+        livreId: Int!
+        themeId: Int!
+    ): Livre!
 }
+

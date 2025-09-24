@@ -1,16 +1,15 @@
 import {ApolloServer} from "@apollo/server";
-import { Context } from "./types";
-import LivreDB from './app/datasource/livreDB';
-import {startStandaloneServer} from "@apollo/server/standalone";
-import debug from "debug";
-import typeDefs from "./app/schemas"
 import resolvers from "./app/resolvers";
-import DBClient from "./app/datasource/livreDB/db/pg"
-
-import Keyv from "keyv";
+import typeDefs from "./app/schemas";
+import debug from "debug";
+import {KeyvAdapter} from "@apollo/utils.keyvadapter";
 import KeyvRedis from "@keyv/redis";
-import { KeyvAdapter } from "@apollo/utils.keyvadapter"
-import {ApolloServerPluginCacheControl} from "@apollo/server/dist/esm/plugin/cacheControl";
+import Keyv from "keyv";
+import {Context} from "./types";
+import LivreDB from "./app/datasource/livreDB";
+import DBClient from "./app/datasource/livreDB/db/pg";
+import { ApolloServerPluginCacheControl } from "@apollo/server/plugin/cacheControl";
+import { startStandaloneServer } from "@apollo/server/standalone";
 
 const PORT = 3000;
 

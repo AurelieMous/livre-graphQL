@@ -1,0 +1,59 @@
+# Fichier .dockerignore
+# À créer à la racine de votre projet (même niveau que le Dockerfile)
+
+# Dossier node_modules local - CRUCIAL pour éviter les conflits
+node_modules/
+
+# Fichiers de cache npm
+npm-debug.log*
+.npm
+
+# Fichiers temporaires et logs
+*.log
+logs/
+*.pid
+*.seed
+*.pid.lock
+
+# Répertoires de build et de distribution
+dist/
+build/
+.next/
+out/
+
+# Fichiers d'environnement local
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Fichiers de cache et métadonnées
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Fichiers Git
+.git/
+.gitignore
+README.md
+.github/
+
+# Fichiers Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Coverage et tests
+coverage/
+.nyc_output/
+.coverage/
+
+# Fichiers TypeScript build
+*.tsbuildinfo
+.tscache/
+
+# Cache Yarn (si vous utilisez Yarn)
+.yarn/
+.pnp.cjs
+.pnp.loader.mjs

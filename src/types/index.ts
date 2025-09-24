@@ -1,6 +1,7 @@
 import LivreDB from "../app/datasource/livreDB"
 import {Pool, QueryResult} from "pg";
 import {KeyValueCache} from "@apollo/utils.keyvaluecache";
+import {BaseContext} from "@apollo/server";
 
 export interface Livre {
     id: number;
@@ -21,6 +22,7 @@ export interface Auteur {
     prenom: string;
     description: string;
     createdAt: Date;
+    livres_id: number;
 }
 
 export interface Theme {
@@ -28,15 +30,17 @@ export interface Theme {
     titre: string;
     adulte: boolean;
     createdAt: Date;
+    livres_id: number;
 }
 
 export interface Pays {
     id: number;
     nom: string;
     createdAt: Date;
+    livres_id: number;
 }
 
-export interface Context {
+export interface Context extends BaseContext {
     datasource : {
         livreDB: LivreDB
     }

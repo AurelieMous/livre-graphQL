@@ -1,5 +1,6 @@
 import LivreDB from "../app/datasource/livreDB"
 import {Pool, QueryResult} from "pg";
+import {KeyValueCache} from "@apollo/utils.keyvaluecache";
 
 export interface Livre {
     id: number;
@@ -48,6 +49,7 @@ export interface DatabaseClient {
 
 export interface LivreDBConfig {
     client: DatabaseClient;
+    cache: KeyValueCache<string>;
 }
 
 export interface QueryArgs {
@@ -62,9 +64,18 @@ export interface Pagination {
     direction: string;
 }
 
-export interface MutationArgs {
-    id: number;
-    restaurantId: number;
-    cookingStyleId: number;
-    input: Theme | Livre | Auteur | Pays;
+export interface CreateLivreArgs{
+    input: CreateLivreInput;
 }
+
+export interface UpdateLivreArgs{
+    id: number;
+    input: UpdateLivreInput
+}
+
+export interface DeleteLivreArgs{
+    id: number;
+}
+
+export interface CreateLivreInput extends Omit<Livre, 'id' | 'createdAt'> {}
+export interface UpdateLivreInput extends CreateLivreInput {}

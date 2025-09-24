@@ -2,6 +2,10 @@
 import config from "./config";
 // Import des types TypeScript pour la cohérence du code
 import { DatabaseClient, Pagination, LivreDBConfig } from "../../../types";
+// Import pour générer des hashes SHA-1 utilisés comme clés de cache
+import {createHash} from "node:crypto";
+// Import du système de cache clé-valeur d'Apollo Server
+import { KeyValueCache } from "@apollo/utils.keyvaluecache";
 
 /**
  * Classe abstraite CoreDatamapper - Pattern Data Mapper
@@ -22,6 +26,10 @@ abstract class CoreDatamapper<T> {
     // Client de base de données injecté pour exécuter les requêtes
     protected client: DatabaseClient;
 
+    // Système de cache pour optimiser les performances des requêtes répétitives
+    // Utilise une interface clé-valeur compatible avec Redis, Memcached, ou un cache en mémoire
+    protected cache: KeyValueCache<string>
+
     /**
      * Constructeur - Injection de dépendance du client DB
      * @param options Configuration contenant le client de base de données
@@ -31,6 +39,7 @@ abstract class CoreDatamapper<T> {
             throw new Error("client is required");
         }
         this.client = options.client;
+        this.cache = options.cache;
     }
 
     /**
@@ -159,6 +168,51 @@ abstract class CoreDatamapper<T> {
             // Direction par défaut ASC, seule DESC est acceptée en alternative
             direction: direction?.toUpperCase() === "DESC" ? "DESC" : "ASC",
         };
+    }
+
+    /**
+     * Méthode de cache intelligente pour optimiser les requêtes récurrentes
+     *
+     * Fonctionnement :
+     * 1. Génère une clé unique basée sur la requête SQL et ses paramètres
+     * 2. Vérifie si le résultat existe déjà en cache
+     * 3. Si trouvé : retourne directement le résultat mis en cache (gain de performance)
+     * 4. Si absent : exécute la requête, stocke le résultat en cache, puis le retourne
+     *
+     * @param preparedQuery Requête préparée avec son texte SQL et ses paramètres
+     * @returns Résultats de la requête (depuis le cache ou la base de données)
+     */
+    async cacheQuery(preparedQuery : {
+        text: string,
+        values: (object | number)[],
+    }): Promise<T[]> {
+        // Génération d'une clé de cache unique et déterministe
+        // Utilise SHA-1 pour créer un hash de la requête complète (SQL + paramètres)
+        // Le hash garantit que deux requêtes identiques auront la même clé
+        const cacheKey = createHash("sha1")
+            .update(JSON.stringify(preparedQuery)) // Sérialisation de l'objet requête
+            .digest("base64"); // Encodage en base64 pour une clé lisible
+
+        // Tentative de récupération depuis le cache
+        const cachedValue = await this.cache.get(cacheKey);
+
+        // Cache hit : résultat trouvé en cache
+        if (cachedValue) {
+            // Désérialisation du JSON stocké et retour immédiat
+            // Évite complètement l'accès à la base de données
+            return JSON.parse(cachedValue);
+        }
+
+        // Cache miss : le résultat n'existe pas en cache
+        // Exécution de la requête sur la base de données
+        const result = await this.client.query(preparedQuery);
+
+        // Stockage du résultat en cache pour les prochaines requêtes identiques
+        // Sérialisation en JSON pour la persistance
+        await this.cache.set(cacheKey, JSON.stringify(result.rows));
+
+        // Retour du résultat frais de la base de données
+        return result.rows;
     }
 }
 

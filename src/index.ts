@@ -5,6 +5,7 @@ import {startStandaloneServer} from "@apollo/server/standalone";
 import debug from "debug";
 import typeDefs from "./app/schemas"
 import resolvers from "./app/resolvers";
+import DBClient from "./app/datasource/livreDB/db/pg"
 
 import Keyv from "keyv";
 import KeyvRedis from "@keyv/redis";
@@ -27,9 +28,10 @@ const server = new ApolloServer({
 });
 
 async function createContext() : Promise<Context> {
+    const { cache } = server;
     return {
         datasource: {
-            livreDB: new LivreDB(),
+            livreDB: new LivreDB({client: DBClient, cache}),
         },
     };
 }

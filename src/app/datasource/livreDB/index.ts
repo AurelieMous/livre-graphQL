@@ -32,20 +32,13 @@ class LivreDB{
      * @param options Configuration optionnelle pour surcharger les paramètres par défaut
      *                Si non fournie, utilise le client PostgreSQL par défaut
      */
-    constructor(options? : LivreDBConfig) {
-        // Configuration par défaut : utilise le client PostgreSQL importé
-        const defaultOption = { client };
-
-        // Merge des options : les options passées en paramètre écrasent les valeurs par défaut
-        // Utilise l'opérateur spread pour créer un nouvel objet
-        const finalOption = { ...defaultOption, ...options };
-
+    constructor(options : LivreDBConfig) {
         // Instanciation de tous les datamappers avec la configuration finale
         // Chaque datamapper hérite de CoreDatamapper et implémente ses spécificités
-        this.livre = new Livre(finalOption);
-        this.auteur = new Auteur(finalOption);
-        this.theme = new Theme(finalOption);
-        this.pays = new Pays(finalOption);
+        this.livre = new Livre(options);
+        this.auteur = new Auteur(options);
+        this.theme = new Theme(options);
+        this.pays = new Pays(options);
     }
 }
 

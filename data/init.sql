@@ -22,7 +22,7 @@ CREATE TABLE theme (
     id SERIAL PRIMARY KEY,
     titre VARCHAR(255) NOT NULL,
     adulte BOOLEAN NOT NULL DEFAULT false,
-    createdAt TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     livres_id INTEGER -- Champ selon votre interface (peut rester NULL)
 );
 
@@ -32,7 +32,7 @@ CREATE TABLE auteur (
     nom VARCHAR(100) NOT NULL,
     prenom VARCHAR(100) NOT NULL,
     description TEXT NOT NULL,
-    createdAt TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     livres_id INTEGER -- Champ selon votre interface (peut rester NULL)
 );
 
@@ -41,13 +41,13 @@ CREATE TABLE livre (
     id SERIAL PRIMARY KEY,
     titre VARCHAR(255) NOT NULL,
     resume TEXT NOT NULL,
-    dateParution DATE,
-    dateParutionFrance DATE,
+    date_parution DATE,
+    date_parution_france DATE,
     auteur_id INTEGER NOT NULL,
-    theme_id INTEGER NOT NULL,  -- ← Gardé selon votre interface
+    theme_id INTEGER,
     pays_id INTEGER NOT NULL,
-    nbPage INTEGER NOT NULL,
-    createdAt TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    nb_page INTEGER NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 
     -- Contraintes de clés étrangères
     CONSTRAINT fk_livre_auteur
@@ -147,7 +147,7 @@ INSERT INTO auteur (nom, prenom, description, livres_id) VALUES
     ('Dickens', 'Charles', 'Romancier britannique de l''époque victorienne', NULL);
 
 -- Insertion des livres (avec theme_id principal selon votre interface)
-INSERT INTO livre (titre, resume, dateParution, dateParutionFrance, auteur_id, theme_id, pays_id, nbPage) VALUES
+INSERT INTO livre (titre, resume, date_parution, date_parution_france, auteur_id, theme_id, pays_id, nb_page) VALUES
     (
         'Harry Potter à l''école des sorciers',
         'L''histoire d''un jeune sorcier découvrant ses pouvoirs magiques et intégrant l''école de sorcellerie Poudlard.',

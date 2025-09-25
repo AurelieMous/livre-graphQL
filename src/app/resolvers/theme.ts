@@ -11,12 +11,15 @@ const resolvers = {
      * - Avec DataLoader: 2 requêtes seulement
      */
     livres: async (
-        parent: Theme, pagination: Pagination, {datasource}: Context
+        parent: Theme,
+        pagination: Pagination,
+        {datasource}: Context
     ): Promise<ILivre[]> => {
-        return await datasource.livreDB.livre.findByThemeLoader.load({
+        const livres = await datasource.livreDB.livre.findByTheme({
             themeId: parent.id,
-            pagination: pagination || {limit: 10, offset: 0}
+            pagination
         });
+        return livres;
     },
 }
 

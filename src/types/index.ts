@@ -9,9 +9,9 @@ export interface Livre {
     resume: string;
     dateParution: Date;
     dateParutionFrance: Date;
-    auteur_id: number;    // ← ID de l'auteur en base
-    theme_id: number;     // ← ID du thème en base
-    pays_id: number;      // ← ID du pays en base
+    auteurId: number;
+    themeId: number;
+    paysId: number;
     nbPage: number;
     createdAt: Date;
 }
@@ -22,7 +22,7 @@ export interface Auteur {
     prenom: string;
     description: string;
     createdAt: Date;
-    livres_id: number;
+    livreId: number;
 }
 
 export interface Theme {
@@ -30,14 +30,14 @@ export interface Theme {
     titre: string;
     adulte: boolean;
     createdAt: Date;
-    livres_id: number;
+    livreId: number;
 }
 
 export interface Pays {
     id: number;
     nom: string;
     createdAt: Date;
-    livres_id: number;
+    livreId: number;
 }
 
 export interface Context extends BaseContext {
@@ -68,15 +68,6 @@ export interface Pagination {
     direction: string;
 }
 
-export interface CreateLivreArgs{
-    input: CreateLivreInput;
-}
-
-export interface UpdateLivreArgs{
-    id: number;
-    input: UpdateLivreInput
-}
-
 export interface DeleteLivreArgs{
     id: number;
 }
@@ -85,7 +76,5 @@ export interface MutationArgs {
     id: number;
     livreId: number;
     themeId: number;
+    input: Livre;
 }
-
-export interface CreateLivreInput extends Omit<Livre, 'id' | 'createdAt'> {}
-export interface UpdateLivreInput extends CreateLivreInput {}

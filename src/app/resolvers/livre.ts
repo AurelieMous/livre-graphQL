@@ -26,7 +26,7 @@ const resolvers = {
      */
     auteur: async (parent: Livre, _: undefined, { datasource }: Context): Promise<Auteur> => {
         // Récupération de l'auteur via son ID stocké dans le livre
-        const auteur = await datasource.livreDB.auteur.findByPk(parent.auteur_id);
+        const auteur = await datasource.livreDB.auteur.findByPk(parent.auteurId);
         // Cast explicite vers le type Auteur (à éviter si possible, mieux vaut typer correctement)
         return auteur as Auteur;
     },
@@ -41,9 +41,14 @@ const resolvers = {
      * @param datasource Context contenant l'accès aux datamappers
      * @returns Promise<Theme> Les données du thème
      */
-    themes: async (parent: Livre, _: undefined, { datasource }: Context): Promise<Theme[]> => {
-        const theme = await datasource.livreDB.theme.findByPk(parent.theme_id);
-        return theme ? [theme] : []; // ← Toujours retourner un tableau
+    themes: async (
+        parent: Livre,
+        _: undefined,
+        { datasource }: Context
+    ): Promise<Theme[] | null> => {
+        const themes =
+            await datasource.livreDB.theme.findByLivre(parent.id);
+        return themes;
     },
 
     /**
@@ -58,7 +63,7 @@ const resolvers = {
      */
     pays: async (parent: Livre, _: undefined, { datasource }: Context): Promise<Pays> => {
         // Récupération des données complètes du pays
-        const pays = await datasource.livreDB.pays.findByPk(parent.pays_id);
+        const pays = await datasource.livreDB.pays.findByPk(parent.paysId);
         return pays as Pays;
     }
 }

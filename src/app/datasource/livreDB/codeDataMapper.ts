@@ -1,11 +1,13 @@
 // Import de la configuration générale de l'application (limites de pagination, etc.)
 import config from "./config";
 // Import des types TypeScript pour la cohérence du code
-import { DatabaseClient, Pagination, LivreDBConfig } from "../../../types";
+import {DatabaseClient, Pagination, LivreDBConfig} from "../../../types";
 // Import pour générer des hashes SHA-1 utilisés comme clés de cache
 import {createHash} from "node:crypto";
 // Import du système de cache clé-valeur d'Apollo Server
 import { KeyValueCache } from "@apollo/utils.keyvaluecache";
+import Livre from "./livre";
+import {transformArrayKeys, transformObjectKeys} from "../../resolvers/utils/caseTransform";
 
 /**
  * Classe abstraite CoreDatamapper - Pattern Data Mapper
@@ -47,7 +49,7 @@ abstract class CoreDatamapper<T> {
      * @param id Identifiant unique de l'entité
      * @returns L'entité trouvée ou null si inexistante
      */
-    async findByPk(id: number): Promise<T | null> {
+    async findByPk(id: number) {
         // Requête préparée pour éviter les injections SQL
         const preparedQuery = {
             text: `SELECT * FROM "${this.tableName}" WHERE id = $1`,
@@ -56,7 +58,7 @@ abstract class CoreDatamapper<T> {
         const result = await this.client.query(preparedQuery);
 
         // Retourne la première ligne ou null si aucun résultat
-        return result.rows[0] ? result.rows[0] : null;
+        return result.rows[0] ? transformObjectKeys(result.rows[0]) : null
     }
 
     /**
@@ -64,7 +66,7 @@ abstract class CoreDatamapper<T> {
      * @param pagination Paramètres de pagination (limite, offset, tri)
      * @returns Tableau des entités paginées
      */
-    async findAll(pagination: Pagination): Promise<T[]> {
+    async findAll(pagination: Pagination) {
         // Normalisation et validation des paramètres de pagination
         const { limit, offset, orderBy, direction } =
             this.preparePaginationParams(pagination);
@@ -74,7 +76,7 @@ abstract class CoreDatamapper<T> {
             values: [limit, offset],
         };
         const result = await this.client.query(preparedQuery);
-        return result.rows;
+        return transformArrayKeys(result.rows);
     }
 
     /**
@@ -82,17 +84,12 @@ abstract class CoreDatamapper<T> {
      * @param data Objet contenant les données à insérer
      * @returns L'entité créée avec son ID généré
      */
-    async create(data: object): Promise<T> {
-        // Extraction des clés et valeurs de l'objet
+    async create(data: object): Promise<T>{
         const keys = Object.keys(data);
         const values = Object.values(data);
-
-        // Génération des placeholders ($1, $2, $3...)
         const placeholders = keys.map((_, index) => `$${index + 1}`).join(", ");
-
         const preparedQuery = {
-            // RETURNING * retourne l'entité créée avec l'ID auto-généré
-            text: `INSERT INTO "${this.tableName}" (${keys.join(", ")}) VALUES (${placeholders}) RETURNING *`,
+            text: `INSERT INTO "${this.tableName}" (${keys}) VALUES (${placeholders}) RETURNING *`,
             values,
         };
         const result = await this.client.query(preparedQuery);
@@ -105,7 +102,7 @@ abstract class CoreDatamapper<T> {
      * @param data Nouvelles données à appliquer
      * @returns L'entité modifiée
      */
-    async update(id: number, data: object): Promise<T> {
+    async update(id: number, data: object) {
         const keys = Object.keys(data);
         const values = Object.values(data);
 
@@ -122,7 +119,7 @@ abstract class CoreDatamapper<T> {
             values: [...values, id], // Spread des valeurs + l'ID
         };
         const result = await this.client.query(preparedQuery);
-        return result.rows[0];
+        return transformObjectKeys(result.rows[0]);
     }
 
     /**

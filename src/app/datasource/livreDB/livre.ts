@@ -1,9 +1,10 @@
 // Import du DataMapper de base contenant les opérations CRUD génériques
 import CoreDatamapper from "./codeDataMapper";
 // Import des types TypeScript pour assurer la cohérence des données
-import {Livre as ILivre, LivreDBConfig, Pagination} from "../../../types";
+import { Livre as ILivre, LivreDBConfig, Pagination} from "../../../types";
 // Import de DataLoader pour résoudre le problème N+1 des requêtes GraphQL
 import DataLoader from "dataloader";
+import {transformObjectKeys} from "../../resolvers/utils/caseTransform";
 
 /**
  * DataSource Livre - Spécialisation du CoreDatamapper
@@ -91,7 +92,7 @@ class Livre extends CoreDatamapper<ILivre>{
 
             // Redistribution des résultats : chaque auteur reçoit ses livres
             return auteurIds.map(auteurId =>
-                results.filter(row => row.auteur_id === auteurId));
+                results.filter(row => row.auteurId === auteurId));
         });
 
         /**
@@ -100,32 +101,33 @@ class Livre extends CoreDatamapper<ILivre>{
          */
         this.findByThemeLoader = new DataLoader(async keys => {
             const themesIds = keys.map(key => key.themeId);
-            const { limit, offset, orderBy, direction } = this.preparePaginationParams(keys[0].pagination);
-
-            // ATTENTION : Bug dans la requête SQL - utilise auteur_id au lieu de theme_id
+            const { limit, offset, orderBy, direction } =
+                this.preparePaginationParams(keys[0].pagination);
             const preparedQuery = {
-                text:`
-                SELECT *
-                FROM (
-                    SELECT *,
-                           ROW_NUMBER() OVER (
-                           PARTITION BY theme_id  -- CORRECTION: devrait être theme_id, pas auteur_id
-                           ORDER BY "${orderBy}" ${direction}
-                           ) AS row_num
-                    FROM "${this.tableName}"
-                    WHERE theme_id = ANY($1)  -- CORRECTION: devrait être theme_id
-                     ) AS subquery
-                WHERE row_num BETWEEN ($3 + 1) AND ($3 + $2)
-                `,
-                values: [themesIds, limit, offset]
-            }
-
+                text: `
+                    WITH ranked_livres AS (
+                      SELECT 
+                        r.*, 
+                        rcs.theme_id,
+                        ROW_NUMBER() OVER (
+                          PARTITION BY rcs.theme_id 
+                          ORDER BY r.${orderBy} ${direction}
+                        ) AS row_num
+                      FROM livre r
+                      JOIN livre_theme rcs 
+                        ON r.id = rcs.livre_id
+                      WHERE rcs.theme_id = ANY($1)
+                    )
+                    SELECT *
+                    FROM ranked_livres
+                    WHERE row_num BETWEEN ($2 + 1) AND ($2 + $3)`,
+                values: [themesIds, limit, offset],
+            };
             const results = await this.cacheQuery(preparedQuery);
-
-            // Redistribution par theme_id
             return themesIds.map(themeId =>
-                results.filter(row => row.theme_id === themeId));
-        })
+                results.filter(row => row.themeId === themeId)
+            );
+        });
 
         /**
          * Configuration du DataLoader pour les livres par pays
@@ -157,7 +159,7 @@ class Livre extends CoreDatamapper<ILivre>{
 
             // Redistribution par pays_id
             return paysIds.map(paysId =>
-                results.filter(row => row.pays_id === paysId));
+                results.filter(row => row.paysId === paysId));
         });
     }
 
@@ -175,6 +177,7 @@ class Livre extends CoreDatamapper<ILivre>{
      * @param pagination Paramètres de pagination
      * @returns Liste paginée des livres de cet auteur
      */
+
     async findByAuteur(auteurId: number, pagination: Pagination) {
         const { limit, offset, orderBy, direction } = this.preparePaginationParams(pagination);
 
@@ -188,7 +191,7 @@ class Livre extends CoreDatamapper<ILivre>{
 
         // Exécution directe sans cache (pourrait être optimisée avec this.cacheQuery)
         const results = await this.client.query(preparedQuery);
-        return results.rows;
+        return transformObjectKeys(results.rows);
     }
 
     /**
@@ -247,6 +250,7 @@ class Livre extends CoreDatamapper<ILivre>{
         const livre = await this.findByPk(livreId);
         return livre;
     }
+
 }
 
 export default Livre;
